@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Aged Care Facilities</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -13,17 +14,16 @@
   --gold:#e8a642;--amber:#d4870a;
   --red:#e85a4f;--cream:#f5f0e8;--muted:#6b7c93;
 }
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);overflow:hidden}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--navy);overflow:hidden}
 
-/* HEADER */
 header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   display:flex;align-items:center;gap:12px;padding:0 18px;
   background:var(--navy);border-bottom:1px solid rgba(255,255,255,0.08);
   box-shadow:0 2px 20px rgba(0,0,0,0.4)}
-.logo{width:34px;height:34px;border-radius:9px;flex-shrink:0;
+.logo{width:36px;height:36px;border-radius:9px;flex-shrink:0;
   background:linear-gradient(135deg,var(--teal),var(--teal-l));
-  display:flex;align-items:center;justify-content:center;font-size:17px}
-.hd-text h1{font-family:'DM Serif Display',serif;color:var(--cream);font-size:1rem}
+  display:flex;align-items:center;justify-content:center;font-size:18px}
+.hd-text h1{color:var(--cream);font-size:1rem;font-weight:700}
 .hd-text p{color:var(--muted);font-size:0.68rem;margin-top:1px}
 .hd-right{margin-left:auto;display:flex;gap:8px;align-items:center}
 .badge{background:rgba(26,140,122,0.18);color:var(--teal-l);
@@ -32,7 +32,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .hd-count{color:var(--cream);font-size:0.7rem;
   background:rgba(255,255,255,0.07);border-radius:20px;padding:3px 10px}
 
-/* SIDEBAR */
 #sidebar{position:fixed;top:60px;left:0;bottom:0;width:265px;z-index:1000;
   background:var(--navy);border-right:1px solid rgba(255,255,255,0.07);
   display:flex;flex-direction:column}
@@ -45,21 +44,20 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .sb-search input:focus{border-color:var(--teal)}
 .sb-label{padding:8px 13px 4px;font-size:0.6rem;font-weight:700;
   letter-spacing:0.1em;color:var(--muted);text-transform:uppercase}
-.fac-list{flex:1;overflow-y:auto;padding-bottom:8px}
+.fac-list{flex:1;overflow-y:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
 .fac-list::-webkit-scrollbar{width:3px}
 .fac-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
 .fac-row{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;cursor:pointer;
-  border-left:3px solid transparent;transition:background 0.15s,border-color 0.15s}
-.fac-row:hover,.fac-row:active{background:rgba(26,140,122,0.1);border-left-color:rgba(34,184,158,0.5)}
-.fac-row.active{background:rgba(26,140,122,0.16);border-left-color:var(--teal-l)}
+  border-left:3px solid transparent;transition:background 0.15s,border-color 0.15s;
+  -webkit-tap-highlight-color:transparent}
+.fac-row:active,.fac-row.active{background:rgba(26,140,122,0.16);border-left-color:var(--teal-l)}
 .fac-row.hidden{display:none}
-.code-pill{font-size:0.63rem;font-weight:800;letter-spacing:0.04em;
-  padding:3px 6px;border-radius:6px;flex-shrink:0;margin-top:2px;
-  min-width:32px;text-align:center;
+.code-pill{font-size:0.63rem;font-weight:800;padding:3px 6px;border-radius:6px;
+  flex-shrink:0;margin-top:2px;min-width:32px;text-align:center;
   background:rgba(26,140,122,0.2);color:var(--teal-l);
   border:1px solid rgba(34,184,158,0.25)}
 .fac-info{flex:1;min-width:0}
-.fac-name{color:var(--cream);font-size:0.75rem;font-weight:500;line-height:1.3}
+.fac-name{color:var(--cream);font-size:0.75rem;font-weight:600;line-height:1.3}
 .fac-addr{color:var(--muted);font-size:0.63rem;margin-top:2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fac-beds{color:var(--muted);font-size:0.62rem;margin-top:2px}
@@ -67,65 +65,69 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   font-size:0.63rem;color:var(--muted);line-height:1.6}
 .sb-footer strong{color:var(--gold)}
 
-/* MAP CONTAINER */
-#map-wrap{position:fixed;top:60px;left:265px;right:0;bottom:0;z-index:1}
-#gmap{width:100%;height:100%;border:none;display:block}
+#map{position:fixed;top:60px;left:265px;right:0;bottom:0;z-index:1}
 
-/* PIN LAYER */
-#pin-layer{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:200}
-.map-pin{position:absolute;transform:translate(-50%,-50%);
-  width:44px;height:44px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:0.57rem;font-weight:800;letter-spacing:0.03em;
-  cursor:pointer;text-align:center;line-height:1.1;color:#fff;
-  pointer-events:all;border:3px solid var(--teal);background:var(--navy);
-  box-shadow:0 4px 16px rgba(13,33,55,0.55),0 0 0 4px rgba(34,184,158,0.2);
-  transition:transform 0.18s;-webkit-tap-highlight-color:transparent;user-select:none}
-.map-pin:active{transform:translate(-50%,-50%) scale(1.18)}
-.map-pin.hi{border-color:var(--red);background:#a02820;
-  box-shadow:0 4px 16px rgba(232,90,79,0.5),0 0 0 4px rgba(232,90,79,0.2)}
-.map-pin.mid{border-color:var(--amber);background:#8c5c08;
-  box-shadow:0 4px 16px rgba(232,166,66,0.5),0 0 0 4px rgba(232,166,66,0.2)}
+/* Leaflet popup */
+.leaflet-popup-content-wrapper{
+  border-radius:14px!important;padding:0!important;
+  box-shadow:0 12px 48px rgba(0,0,0,0.3)!important;
+  border:none!important;overflow:hidden;min-width:280px;max-width:320px}
+.leaflet-popup-content{margin:0!important;width:auto!important}
+.leaflet-popup-tip-container{display:none!important}
+.leaflet-popup-close-button{
+  color:rgba(255,255,255,0.7)!important;font-size:20px!important;
+  top:8px!important;right:10px!important;z-index:10;padding:0!important;
+  width:auto!important;height:auto!important}
+.leaflet-popup-close-button:hover{color:#fff!important}
 
-/* POPUP */
-#popup-wrap{display:none;position:absolute;z-index:400;pointer-events:none}
-.popup-card{background:#fff;border-radius:14px;overflow:hidden;
-  box-shadow:0 12px 48px rgba(0,0,0,0.32);min-width:280px;max-width:320px;
-  font-family:'DM Sans',sans-serif;pointer-events:all}
+/* Popup content */
 .pw-head{background:linear-gradient(135deg,var(--navy),var(--navy-mid));
-  padding:13px 15px 11px;display:flex;gap:10px;align-items:flex-start}
-.pw-code{background:var(--teal);color:#fff;font-size:0.64rem;font-weight:800;
+  padding:14px 16px 12px;display:flex;gap:10px;align-items:flex-start}
+.pw-code{background:var(--teal);color:#fff;font-size:0.66rem;font-weight:800;
   letter-spacing:0.07em;padding:3px 7px;border-radius:6px;flex-shrink:0;margin-top:2px}
-.pw-name{color:var(--cream);font-size:0.85rem;font-weight:600;line-height:1.3}
-.pw-addr{color:var(--muted);font-size:0.66rem;margin-top:2px}
-.pw-phone{color:var(--teal-l);font-size:0.66rem;margin-top:2px}
-.pw-close{float:right;cursor:pointer;color:rgba(255,255,255,0.45);
-  font-size:17px;line-height:1;padding:0 0 2px 8px}
-.pw-close:active{color:#fff}
-.pw-body{background:#fff;padding:12px 15px 14px}
-.pw-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:11px}
+.pw-name{color:var(--cream);font-size:0.88rem;font-weight:700;line-height:1.3;padding-right:20px}
+.pw-addr{color:var(--muted);font-size:0.68rem;margin-top:3px}
+.pw-phone{color:var(--teal-l);font-size:0.68rem;margin-top:2px}
+.pw-body{background:#fff;padding:13px 16px 15px}
+.pw-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
 .pw-stat{background:#f5f0e8;border-radius:8px;padding:8px 9px}
-.pw-stat-lbl{font-size:0.55rem;font-weight:700;letter-spacing:0.08em;
+.pw-stat-lbl{font-size:0.56rem;font-weight:700;letter-spacing:0.08em;
   text-transform:uppercase;color:#8898aa;margin-bottom:3px}
-.pw-stat-val{font-size:1.12rem;font-weight:800;color:var(--navy);line-height:1}
+.pw-stat-val{font-size:1.15rem;font-weight:800;color:var(--navy);line-height:1}
 .pw-stat-val.warn{color:var(--red)}
 .pw-stat-val.caution{color:var(--amber)}
 .pw-stat-val.ok{color:var(--teal)}
 .pw-div{height:1px;background:#eee;margin:10px 0}
-.pw-notes-lbl{font-size:0.55rem;font-weight:700;letter-spacing:0.08em;
+.pw-notes-lbl{font-size:0.56rem;font-weight:700;letter-spacing:0.08em;
   text-transform:uppercase;color:#8898aa;margin-bottom:6px}
-.pw-note{font-size:0.72rem;color:#444;line-height:1.5;
-  border-radius:0 7px 7px 0;padding:6px 9px;margin-bottom:5px;
+.pw-note{font-size:0.73rem;color:#444;line-height:1.5;
+  border-radius:0 7px 7px 0;padding:7px 10px;margin-bottom:5px;
   border-left:3px solid var(--gold);background:#fffbf2}
 .pw-note:last-child{margin-bottom:0}
 .pw-note.info{border-color:var(--teal);background:#eef8f6}
 .pw-note.alert{border-color:var(--red);background:#fff0ef}
 
-/* LEGEND */
-.legend{position:absolute;bottom:18px;right:12px;z-index:300;
-  background:rgba(13,33,55,0.88);backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,0.1);border-radius:11px;
-  padding:11px 13px;color:var(--cream);font-size:0.67rem;pointer-events:none}
+/* Custom marker pin */
+.cpin{
+  width:46px;height:46px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.58rem;font-weight:800;letter-spacing:0.02em;
+  color:#fff;border:3px solid var(--teal);background:var(--navy);
+  box-shadow:0 4px 14px rgba(13,33,55,0.5),0 0 0 4px rgba(34,184,158,0.2);
+  cursor:pointer;text-align:center;line-height:1.1;
+  -webkit-tap-highlight-color:transparent}
+.cpin.hi{border-color:var(--red);background:#a02820;
+  box-shadow:0 4px 14px rgba(232,90,79,0.5),0 0 0 4px rgba(232,90,79,0.2)}
+.cpin.mid{border-color:var(--amber);background:#8c5c08;
+  box-shadow:0 4px 14px rgba(232,166,66,0.5),0 0 0 4px rgba(232,166,66,0.2)}
+
+/* Legend */
+.map-legend{
+  background:rgba(13,33,55,0.88)!important;
+  border:1px solid rgba(255,255,255,0.1)!important;
+  border-radius:11px!important;padding:11px 13px!important;
+  color:var(--cream)!important;font-size:0.67rem!important;
+  line-height:1.4; box-shadow:none!important}
 .leg-title{font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
   font-size:0.58rem;color:var(--muted);margin-bottom:8px}
 .leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
@@ -162,57 +164,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   </div>
 </div>
 
-<div id="map-wrap">
-  <iframe id="gmap" allowfullscreen loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d82000!2d145.155!3d-38.115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sau!4v1717000000000!5m2!1sen!2sau">
-  </iframe>
-
-  <div id="pin-layer"></div>
-
-  <div id="popup-wrap">
-    <div class="popup-card">
-      <div class="pw-head">
-        <span class="pw-code" id="pp-code"></span>
-        <div style="flex:1">
-          <span class="pw-close" id="pp-close">✕</span>
-          <div class="pw-name"  id="pp-name"></div>
-          <div class="pw-addr"  id="pp-addr"></div>
-          <div class="pw-phone" id="pp-phone"></div>
-        </div>
-      </div>
-      <div class="pw-body">
-        <div class="pw-stats">
-          <div class="pw-stat">
-            <div class="pw-stat-lbl">Total Beds</div>
-            <div class="pw-stat-val ok" id="pp-beds"></div>
-          </div>
-          <div class="pw-stat">
-            <div class="pw-stat-lbl">Incidents</div>
-            <div class="pw-stat-val" id="pp-inc"></div>
-          </div>
-          <div class="pw-stat">
-            <div class="pw-stat-lbl">Occupancy</div>
-            <div class="pw-stat-val ok">—</div>
-          </div>
-        </div>
-        <div class="pw-div"></div>
-        <div class="pw-notes-lbl">Notes &amp; Special Requests</div>
-        <div id="pp-notes"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="legend">
-    <div class="leg-title">Incidents (Qtr)</div>
-    <div class="leg-row"><div class="leg-dot g"></div>Low (0–4)</div>
-    <div class="leg-row"><div class="leg-dot a"></div>Medium (5–7)</div>
-    <div class="leg-row"><div class="leg-dot r"></div>High (8+)</div>
-  </div>
-</div>
+<div id="map"></div>
 
 <script>
-/* ═══════════════════════ DATA SOURCE ═══════════════════════ */
+/* ═══════════════════ DATA SOURCE ═══════════════════ */
 const facilities = [
   {code:"AV",name:"MiCare Avondrust Village",suburb:"Carrum Downs VIC 3201",address:"1105 Frankston-Dandenong Rd",phone:"(03) 9788 9020",lat:-38.0853,lng:145.1267,beds:72,incidents:4,
    comments:[{type:"info",text:"70 residential rooms + 2 respite beds. Three-storey facility."},{type:"general",text:"Eden Alternative™ — pets, plants and children welcome."}]},
@@ -233,89 +188,123 @@ const facilities = [
   {code:"XB",name:"Village Baxter",suburb:"Frankston South VIC 3199",address:"8 Robinsons Rd",phone:"(03) 5971 1349",lat:-38.1900,lng:145.1560,beds:64,incidents:1,
    comments:[{type:"info",text:"64-suite government accredited home co-located with retirement village."},{type:"general",text:"Serving Frankston & Mornington Peninsula community since 1986."}]}
 ];
-/* ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════ */
 
 function incClass(n){return n>=8?"hi":n>=5?"mid":""}
 function valClass(n){return n>=8?"warn":n>=5?"caution":"ok"}
 
-// Bounding box matching the Google Maps embed viewport
-const BOUNDS={latMin:-38.37,latMax:-37.88,lngMin:144.90,lngMax:145.46};
+/* ── Init Leaflet map ── */
+const map = L.map('map',{
+  zoomControl:false,
+  tap:true,
+  tapTolerance:15,
+  preferCanvas:false
+}).setView([-38.12,145.16],11);
 
-function toPercent(lat,lng){
-  return{
-    x:(lng-BOUNDS.lngMin)/(BOUNDS.lngMax-BOUNDS.lngMin)*100,
-    y:(BOUNDS.latMax-lat)/(BOUNDS.latMax-BOUNDS.latMin)*100
-  };
-}
+L.control.zoom({position:'topright'}).addTo(map);
 
-const pinLayer=document.getElementById('pin-layer');
-const facList=document.getElementById('facList');
-const popupWrap=document.getElementById('popup-wrap');
-const rowEls=[];
+/* OpenStreetMap tiles — loads fine from GitHub Pages */
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+  maxZoom:19
+}).addTo(map);
+
+/* Legend */
+const legend = L.control({position:'bottomright'});
+legend.onAdd = function(){
+  const d = L.DomUtil.create('div','map-legend');
+  d.innerHTML=`<div class="leg-title">Incidents (Qtr)</div>
+    <div class="leg-row"><div class="leg-dot g"></div>Low (0–4)</div>
+    <div class="leg-row"><div class="leg-dot a"></div>Medium (5–7)</div>
+    <div class="leg-row"><div class="leg-dot r"></div>High (8+)</div>`;
+  return d;
+};
+legend.addTo(map);
+
+/* ── Build sidebar & Leaflet markers ── */
+const facList = document.getElementById('facList');
+const rowEls  = [];
+const markers = [];
 
 facilities.forEach((f,i)=>{
-  // Sidebar
-  const row=document.createElement('div');
+
+  /* Sidebar row */
+  const row = document.createElement('div');
   row.className='fac-row';
-  row.innerHTML=`<span class="code-pill">${f.code}</span>
+  row.innerHTML=`
+    <span class="code-pill">${f.code}</span>
     <div class="fac-info">
       <div class="fac-name">${f.name}</div>
       <div class="fac-addr">${f.address}, ${f.suburb}</div>
-      <div class="fac-beds">🛏 ${f.beds} beds &nbsp;·&nbsp; ☎ ${f.phone}</div>
+      <div class="fac-beds">🛏 ${f.beds} beds · ☎ ${f.phone}</div>
     </div>`;
-  row.addEventListener('click',()=>showPopup(f,i));
+  row.addEventListener('click',()=>{
+    map.setView([f.lat,f.lng],15,{animate:true});
+    markers[i].openPopup();
+    setActive(i);
+  });
   facList.appendChild(row);
   rowEls.push(row);
 
-  // Pin
-  const {x,y}=toPercent(f.lat,f.lng);
-  const pin=document.createElement('div');
-  pin.className=`map-pin ${incClass(f.incidents)}`;
-  pin.textContent=f.code;
-  pin.style.left=x+'%';
-  pin.style.top=y+'%';
-  pin.addEventListener('click',()=>showPopup(f,i));
-  pinLayer.appendChild(pin);
+  /* Leaflet DivIcon — moves with map natively */
+  const icon = L.divIcon({
+    className:'',
+    html:`<div class="cpin ${incClass(f.incidents)}">${f.code}</div>`,
+    iconSize:[46,46],
+    iconAnchor:[23,23],
+    popupAnchor:[0,-28]
+  });
+
+  /* Popup HTML */
+  const notes = f.comments.map(c=>
+    `<div class="pw-note ${c.type}">${c.text}</div>`).join('');
+
+  const popupHTML = `
+    <div class="pw-head">
+      <span class="pw-code">${f.code}</span>
+      <div>
+        <div class="pw-name">${f.name}</div>
+        <div class="pw-addr">📍 ${f.address}, ${f.suburb}</div>
+        <div class="pw-phone">☎ ${f.phone}</div>
+      </div>
+    </div>
+    <div class="pw-body">
+      <div class="pw-stats">
+        <div class="pw-stat">
+          <div class="pw-stat-lbl">Total Beds</div>
+          <div class="pw-stat-val ok">${f.beds}</div>
+        </div>
+        <div class="pw-stat">
+          <div class="pw-stat-lbl">Incidents</div>
+          <div class="pw-stat-val ${valClass(f.incidents)}">${f.incidents}</div>
+        </div>
+        <div class="pw-stat">
+          <div class="pw-stat-lbl">Occupancy</div>
+          <div class="pw-stat-val ok">—</div>
+        </div>
+      </div>
+      <div class="pw-div"></div>
+      <div class="pw-notes-lbl">Notes &amp; Special Requests</div>
+      ${notes}
+    </div>`;
+
+  /* Create marker — attached to lat/lng so moves with map */
+  const marker = L.marker([f.lat,f.lng],{icon})
+    .addTo(map)
+    .bindPopup(popupHTML,{maxWidth:320,closeButton:true,autoClose:true});
+
+  marker.on('click',()=>setActive(i));
+  marker.on('popupclose',()=>rowEls[i].classList.remove('active'));
+  markers.push(marker);
 });
 
-function showPopup(f,i){
-  document.getElementById('pp-code').textContent=f.code;
-  document.getElementById('pp-name').textContent=f.name;
-  document.getElementById('pp-addr').textContent='📍 '+f.address+', '+f.suburb;
-  document.getElementById('pp-phone').textContent='☎ '+f.phone;
-  document.getElementById('pp-beds').textContent=f.beds;
-  const inc=document.getElementById('pp-inc');
-  inc.textContent=f.incidents;
-  inc.className='pw-stat-val '+valClass(f.incidents);
-  document.getElementById('pp-notes').innerHTML=
-    f.comments.map(c=>`<div class="pw-note ${c.type}">${c.text}</div>`).join('');
-
-  const {x,y}=toPercent(f.lat,f.lng);
-  const wrap=document.getElementById('map-wrap');
-  const cw=wrap.offsetWidth,ch=wrap.offsetHeight;
-  const px=x/100*cw,py=y/100*ch;
-  const card=popupWrap.querySelector('.popup-card');
-
-  popupWrap.style.display='block';
-  // Position so popup doesn't go off screen
-  let left=px-card.offsetWidth/2;
-  let top=py-card.offsetHeight-28;
-  if(left<8)left=8;
-  if(left+card.offsetWidth>cw-8)left=cw-card.offsetWidth-8;
-  if(top<8)top=py+28;
-  popupWrap.style.left=left+'px';
-  popupWrap.style.top=top+'px';
-
+function setActive(i){
   rowEls.forEach(r=>r.classList.remove('active'));
   rowEls[i].classList.add('active');
   rowEls[i].scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 
-document.getElementById('pp-close').addEventListener('click',()=>{
-  popupWrap.style.display='none';
-  rowEls.forEach(r=>r.classList.remove('active'));
-});
-
+/* Search */
 document.getElementById('searchBox').addEventListener('input',function(){
   const q=this.value.toLowerCase();
   rowEls.forEach((row,i)=>{
