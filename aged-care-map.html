@@ -67,11 +67,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 
 #map{position:fixed;top:60px;left:265px;right:0;bottom:0;z-index:1}
 
-/* Leaflet popup */
+/* Popup */
 .leaflet-popup-content-wrapper{
   border-radius:14px!important;padding:0!important;
   box-shadow:0 12px 48px rgba(0,0,0,0.3)!important;
-  border:none!important;overflow:hidden;min-width:280px;max-width:320px}
+  border:none!important;overflow:hidden;min-width:290px;max-width:330px}
 .leaflet-popup-content{margin:0!important;width:auto!important}
 .leaflet-popup-tip-container{display:none!important}
 .leaflet-popup-close-button{
@@ -80,7 +80,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   width:auto!important;height:auto!important}
 .leaflet-popup-close-button:hover{color:#fff!important}
 
-/* Popup content */
 .pw-head{background:linear-gradient(135deg,var(--navy),var(--navy-mid));
   padding:14px 16px 12px;display:flex;gap:10px;align-items:flex-start}
 .pw-code{background:var(--teal);color:#fff;font-size:0.66rem;font-weight:800;
@@ -107,9 +106,22 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .pw-note.info{border-color:var(--teal);background:#eef8f6}
 .pw-note.alert{border-color:var(--red);background:#fff0ef}
 
-/* Custom marker pin */
-.cpin{
-  width:46px;height:46px;border-radius:50%;
+/* Incidents button */
+.pw-btn-row{margin-top:12px}
+.pw-btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;padding:10px 14px;border-radius:9px;border:none;
+  background:linear-gradient(135deg,#1a8c7a,#22b89e);
+  color:#fff;font-size:0.78rem;font-weight:700;letter-spacing:0.03em;
+  cursor:pointer;text-decoration:none;
+  box-shadow:0 4px 14px rgba(26,140,122,0.35);
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity 0.15s}
+.pw-btn:hover,.pw-btn:active{opacity:0.88}
+.pw-btn-icon{font-size:1rem}
+
+/* Marker */
+.cpin{width:46px;height:46px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   font-size:0.58rem;font-weight:800;letter-spacing:0.02em;
   color:#fff;border:3px solid var(--teal);background:var(--navy);
@@ -127,7 +139,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   border:1px solid rgba(255,255,255,0.1)!important;
   border-radius:11px!important;padding:11px 13px!important;
   color:var(--cream)!important;font-size:0.67rem!important;
-  line-height:1.4; box-shadow:none!important}
+  line-height:1.4;box-shadow:none!important}
 .leg-title{font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
   font-size:0.58rem;color:var(--muted);margin-bottom:8px}
 .leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
@@ -159,14 +171,26 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   <div class="sb-label">Facility Directory</div>
   <div class="fac-list" id="facList"></div>
   <div class="sb-footer">
-    <strong>Tap</strong> a pin or list item to view details.<br>
-    Update beds &amp; incidents in the DATA block.
+    <strong>Tap</strong> a pin to view details &amp; open incidents.<br>
+    📊 Links to Dispatch_Incident_Tracker.xlsx
   </div>
 </div>
 
 <div id="map"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════
+   SHAREPOINT BASE LINK
+   The base URL for Dispatch_Incident_Tracker.xlsx
+   Each site opens its own tab directly using &activeCell=
+   ═══════════════════════════════════════════════════════════ */
+const SP_BASE = "https://gunnmcconville.sharepoint.com/:x:/s/GMDispatchCranbourne-ManagementSystem/IQAvXioEJaLXQoCtLoejRMxnAVZc-cb7KlxLpVSodiOWGXE?e=2epmet";
+
+// Build a link that opens directly to a specific sheet tab
+function sheetLink(tabName) {
+  return SP_BASE + "&activeSheet=" + encodeURIComponent(tabName);
+}
+
 /* ═══════════════════ DATA SOURCE ═══════════════════ */
 const facilities = [
   {code:"AV",name:"MiCare Avondrust Village",suburb:"Carrum Downs VIC 3201",address:"1105 Frankston-Dandenong Rd",phone:"(03) 9788 9020",lat:-38.0853,lng:145.1267,beds:72,incidents:4,
@@ -193,17 +217,10 @@ const facilities = [
 function incClass(n){return n>=8?"hi":n>=5?"mid":""}
 function valClass(n){return n>=8?"warn":n>=5?"caution":"ok"}
 
-/* ── Init Leaflet map ── */
-const map = L.map('map',{
-  zoomControl:false,
-  tap:true,
-  tapTolerance:15,
-  preferCanvas:false
-}).setView([-38.12,145.16],11);
-
+/* Map init */
+const map = L.map('map',{zoomControl:false,tap:true,tapTolerance:15})
+             .setView([-38.12,145.16],11);
 L.control.zoom({position:'topright'}).addTo(map);
-
-/* OpenStreetMap tiles — loads fine from GitHub Pages */
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
   maxZoom:19
@@ -221,7 +238,7 @@ legend.onAdd = function(){
 };
 legend.addTo(map);
 
-/* ── Build sidebar & Leaflet markers ── */
+/* Build sidebar & markers */
 const facList = document.getElementById('facList');
 const rowEls  = [];
 const markers = [];
@@ -246,19 +263,21 @@ facilities.forEach((f,i)=>{
   facList.appendChild(row);
   rowEls.push(row);
 
-  /* Leaflet DivIcon — moves with map natively */
+  /* Icon */
   const icon = L.divIcon({
     className:'',
     html:`<div class="cpin ${incClass(f.incidents)}">${f.code}</div>`,
-    iconSize:[46,46],
-    iconAnchor:[23,23],
-    popupAnchor:[0,-28]
+    iconSize:[46,46],iconAnchor:[23,23],popupAnchor:[0,-28]
   });
 
-  /* Popup HTML */
+  /* Notes */
   const notes = f.comments.map(c=>
     `<div class="pw-note ${c.type}">${c.text}</div>`).join('');
 
+  /* Incidents link for this site's tab */
+  const incidentUrl = sheetLink(f.code);
+
+  /* Popup */
   const popupHTML = `
     <div class="pw-head">
       <span class="pw-code">${f.code}</span>
@@ -286,12 +305,17 @@ facilities.forEach((f,i)=>{
       <div class="pw-div"></div>
       <div class="pw-notes-lbl">Notes &amp; Special Requests</div>
       ${notes}
+      <div class="pw-btn-row">
+        <a class="pw-btn" href="${incidentUrl}" target="_blank" rel="noopener">
+          <span class="pw-btn-icon">📊</span>
+          View ${f.code} Incidents in Tracker
+        </a>
+      </div>
     </div>`;
 
-  /* Create marker — attached to lat/lng so moves with map */
   const marker = L.marker([f.lat,f.lng],{icon})
     .addTo(map)
-    .bindPopup(popupHTML,{maxWidth:320,closeButton:true,autoClose:true});
+    .bindPopup(popupHTML,{maxWidth:330,closeButton:true,autoClose:true});
 
   marker.on('click',()=>setActive(i));
   marker.on('popupclose',()=>rowEls[i].classList.remove('active'));
