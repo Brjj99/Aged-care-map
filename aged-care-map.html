@@ -32,6 +32,14 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .hd-count{color:var(--cream);font-size:0.7rem;
   background:rgba(255,255,255,0.07);border-radius:20px;padding:3px 10px}
 
+/* Vehicle status indicator in header */
+.vehicle-status{display:flex;align-items:center;gap:6px;
+  color:var(--cream);font-size:0.7rem;
+  background:rgba(255,255,255,0.07);border-radius:20px;padding:3px 10px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#aaa;flex-shrink:0}
+.status-dot.live{background:#4caf50;box-shadow:0 0 6px #4caf50}
+.status-dot.error{background:var(--red)}
+
 #sidebar{position:fixed;top:60px;left:0;bottom:0;width:265px;z-index:1000;
   background:var(--navy);border-right:1px solid rgba(255,255,255,0.07);
   display:flex;flex-direction:column}
@@ -64,6 +72,16 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .sb-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);
   font-size:0.63rem;color:var(--muted);line-height:1.6}
 .sb-footer strong{color:var(--gold)}
+
+/* Vehicle section in sidebar */
+.sb-vehicle-section{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-vehicle-lbl{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.vehicle-card{background:rgba(255,255,255,0.06);border-radius:8px;
+  padding:8px 10px;border:1px solid rgba(255,255,255,0.08)}
+.vehicle-name{color:var(--cream);font-size:0.75rem;font-weight:600}
+.vehicle-info{color:var(--muted);font-size:0.65rem;margin-top:3px}
+.vehicle-speed{color:var(--teal-l);font-size:0.65rem;margin-top:2px}
 
 #map{position:fixed;top:60px;left:265px;right:0;bottom:0;z-index:1}
 
@@ -106,21 +124,18 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .pw-note.info{border-color:var(--teal);background:#eef8f6}
 .pw-note.alert{border-color:var(--red);background:#fff0ef}
 
-/* Incidents button */
 .pw-btn-row{margin-top:12px}
-.pw-btn{
-  display:flex;align-items:center;justify-content:center;gap:7px;
+.pw-btn{display:flex;align-items:center;justify-content:center;gap:7px;
   width:100%;padding:10px 14px;border-radius:9px;border:none;
   background:linear-gradient(135deg,#1a8c7a,#22b89e);
   color:#fff;font-size:0.78rem;font-weight:700;letter-spacing:0.03em;
   cursor:pointer;text-decoration:none;
   box-shadow:0 4px 14px rgba(26,140,122,0.35);
-  -webkit-tap-highlight-color:transparent;
-  transition:opacity 0.15s}
+  -webkit-tap-highlight-color:transparent;transition:opacity 0.15s}
 .pw-btn:hover,.pw-btn:active{opacity:0.88}
 .pw-btn-icon{font-size:1rem}
 
-/* Marker */
+/* Marker - facility */
 .cpin{width:46px;height:46px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   font-size:0.58rem;font-weight:800;letter-spacing:0.02em;
@@ -132,6 +147,18 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   box-shadow:0 4px 14px rgba(232,90,79,0.5),0 0 0 4px rgba(232,90,79,0.2)}
 .cpin.mid{border-color:var(--amber);background:#8c5c08;
   box-shadow:0 4px 14px rgba(232,166,66,0.5),0 0 0 4px rgba(232,166,66,0.2)}
+
+/* Vehicle marker */
+.vpin{width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
+  border:3px solid #4caf50;background:#1a3a1a;
+  box-shadow:0 4px 14px rgba(76,175,80,0.5),0 0 0 4px rgba(76,175,80,0.2);
+  cursor:pointer;animation:pulse 2s infinite}
+@keyframes pulse{
+  0%{box-shadow:0 4px 14px rgba(76,175,80,0.5),0 0 0 4px rgba(76,175,80,0.2)}
+  50%{box-shadow:0 4px 14px rgba(76,175,80,0.8),0 0 0 8px rgba(76,175,80,0.1)}
+  100%{box-shadow:0 4px 14px rgba(76,175,80,0.5),0 0 0 4px rgba(76,175,80,0.2)}}
 
 /* Legend */
 .map-legend{
@@ -148,6 +175,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .leg-dot.g{border-color:#22b89e;background:rgba(34,184,158,0.3)}
 .leg-dot.a{border-color:#e8a642;background:rgba(232,166,66,0.3)}
 .leg-dot.r{border-color:#e85a4f;background:rgba(232,90,79,0.3)}
+.leg-dot.v{border-color:#4caf50;background:rgba(76,175,80,0.3)}
 </style>
 </head>
 <body>
@@ -160,6 +188,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   </div>
   <div class="hd-right">
     <span class="badge">Live Dashboard</span>
+    <div class="vehicle-status">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Vehicle: Off</span>
+    </div>
     <span class="hd-count">9 sites</span>
   </div>
 </header>
@@ -170,8 +202,20 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   </div>
   <div class="sb-label">Facility Directory</div>
   <div class="fac-list" id="facList"></div>
+
+  <!-- Vehicle info panel -->
+  <div class="sb-vehicle-section" id="vehiclePanel" style="display:none">
+    <div class="sb-vehicle-lbl">🚗 Live Vehicle</div>
+    <div class="vehicle-card">
+      <div class="vehicle-name" id="vName">—</div>
+      <div class="vehicle-info" id="vInfo">Locating…</div>
+      <div class="vehicle-speed" id="vSpeed"></div>
+    </div>
+  </div>
+
   <div class="sb-footer">
     <strong>Tap</strong> a pin to view details &amp; open incidents.<br>
+    🚗 Live vehicle tracking via Fleetlog.<br>
     📊 Links to Dispatch_Incident_Tracker.xlsx
   </div>
 </div>
@@ -180,18 +224,26 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   SHAREPOINT BASE LINK
-   The base URL for Dispatch_Incident_Tracker.xlsx
-   Each site opens its own tab directly using &activeCell=
+   FLEETLOG API CREDENTIALS
+   ── Replace the placeholder values below on GitHub ──
+   DO NOT share these credentials publicly.
+   ═══════════════════════════════════════════════════════════ */
+const FLEETLOG_CLIENT_ID     = "PASTE_YOUR_CLIENT_ID_HERE";
+const FLEETLOG_CLIENT_SECRET = "PASTE_YOUR_CLIENT_SECRET_HERE";
+const FLEETLOG_VEHICLE_ID    = "PASTE_YOUR_VEHICLE_ID_HERE";
+// API base URL — confirm with Fleetlog support
+const FLEETLOG_API_BASE      = "https://api.fleetlog.com.au/v2";
+// How often to refresh vehicle position (milliseconds) — 10000 = 10 seconds
+const REFRESH_INTERVAL       = 10000;
+/* ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   SHAREPOINT LINK
    ═══════════════════════════════════════════════════════════ */
 const SP_BASE = "https://gunnmcconville.sharepoint.com/:x:/s/GMDispatchCranbourne-ManagementSystem/IQAvXioEJaLXQoCtLoejRMxnAVZc-cb7KlxLpVSodiOWGXE?e=2epmet";
+function sheetLink(tab){ return SP_BASE + "&activeSheet=" + encodeURIComponent(tab); }
 
-// Build a link that opens directly to a specific sheet tab
-function sheetLink(tabName) {
-  return SP_BASE + "&activeSheet=" + encodeURIComponent(tabName);
-}
-
-/* ═══════════════════ DATA SOURCE ═══════════════════ */
+/* ═══════════════════ FACILITY DATA ═══════════════════ */
 const facilities = [
   {code:"AV",name:"MiCare Avondrust Village",suburb:"Carrum Downs VIC 3201",address:"1105 Frankston-Dandenong Rd",phone:"(03) 9788 9020",lat:-38.0853,lng:145.1267,beds:72,incidents:4,
    comments:[{type:"info",text:"70 residential rooms + 2 respite beds. Three-storey facility."},{type:"general",text:"Eden Alternative™ — pets, plants and children welcome."}]},
@@ -217,7 +269,7 @@ const facilities = [
 function incClass(n){return n>=8?"hi":n>=5?"mid":""}
 function valClass(n){return n>=8?"warn":n>=5?"caution":"ok"}
 
-/* Map init */
+/* ── MAP ── */
 const map = L.map('map',{zoomControl:false,tap:true,tapTolerance:15})
              .setView([-38.12,145.16],11);
 L.control.zoom({position:'topright'}).addTo(map);
@@ -230,22 +282,21 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 const legend = L.control({position:'bottomright'});
 legend.onAdd = function(){
   const d = L.DomUtil.create('div','map-legend');
-  d.innerHTML=`<div class="leg-title">Incidents (Qtr)</div>
-    <div class="leg-row"><div class="leg-dot g"></div>Low (0–4)</div>
+  d.innerHTML=`<div class="leg-title">Map Legend</div>
+    <div class="leg-row"><div class="leg-dot g"></div>Low incidents (0–4)</div>
     <div class="leg-row"><div class="leg-dot a"></div>Medium (5–7)</div>
-    <div class="leg-row"><div class="leg-dot r"></div>High (8+)</div>`;
+    <div class="leg-row"><div class="leg-dot r"></div>High (8+)</div>
+    <div class="leg-row"><div class="leg-dot v"></div>Live vehicle 🚗</div>`;
   return d;
 };
 legend.addTo(map);
 
-/* Build sidebar & markers */
+/* ── FACILITY MARKERS ── */
 const facList = document.getElementById('facList');
 const rowEls  = [];
 const markers = [];
 
 facilities.forEach((f,i)=>{
-
-  /* Sidebar row */
   const row = document.createElement('div');
   row.className='fac-row';
   row.innerHTML=`
@@ -263,21 +314,14 @@ facilities.forEach((f,i)=>{
   facList.appendChild(row);
   rowEls.push(row);
 
-  /* Icon */
   const icon = L.divIcon({
     className:'',
     html:`<div class="cpin ${incClass(f.incidents)}">${f.code}</div>`,
     iconSize:[46,46],iconAnchor:[23,23],popupAnchor:[0,-28]
   });
 
-  /* Notes */
-  const notes = f.comments.map(c=>
-    `<div class="pw-note ${c.type}">${c.text}</div>`).join('');
+  const notes = f.comments.map(c=>`<div class="pw-note ${c.type}">${c.text}</div>`).join('');
 
-  /* Incidents link for this site's tab */
-  const incidentUrl = sheetLink(f.code);
-
-  /* Popup */
   const popupHTML = `
     <div class="pw-head">
       <span class="pw-code">${f.code}</span>
@@ -306,7 +350,7 @@ facilities.forEach((f,i)=>{
       <div class="pw-notes-lbl">Notes &amp; Special Requests</div>
       ${notes}
       <div class="pw-btn-row">
-        <a class="pw-btn" href="${incidentUrl}" target="_blank" rel="noopener">
+        <a class="pw-btn" href="${sheetLink(f.code)}" target="_blank" rel="noopener">
           <span class="pw-btn-icon">📊</span>
           View ${f.code} Incidents in Tracker
         </a>
@@ -316,7 +360,6 @@ facilities.forEach((f,i)=>{
   const marker = L.marker([f.lat,f.lng],{icon})
     .addTo(map)
     .bindPopup(popupHTML,{maxWidth:330,closeButton:true,autoClose:true});
-
   marker.on('click',()=>setActive(i));
   marker.on('popupclose',()=>rowEls[i].classList.remove('active'));
   markers.push(marker);
@@ -328,7 +371,7 @@ function setActive(i){
   rowEls[i].scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 
-/* Search */
+/* ── SEARCH ── */
 document.getElementById('searchBox').addEventListener('input',function(){
   const q=this.value.toLowerCase();
   rowEls.forEach((row,i)=>{
@@ -339,6 +382,138 @@ document.getElementById('searchBox').addEventListener('input',function(){
       !f.suburb.toLowerCase().includes(q));
   });
 });
+
+/* ══════════════════════════════════════════════════════════
+   FLEETLOG LIVE VEHICLE TRACKING
+   Steps:
+   1. Authenticate with Client ID + Secret → get access token
+   2. Use token to fetch vehicle location
+   3. Update marker on map every 10 seconds
+   ══════════════════════════════════════════════════════════ */
+
+let vehicleMarker = null;
+let accessToken   = null;
+let tokenExpiry   = 0;
+
+const statusDot  = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const vPanel     = document.getElementById('vehiclePanel');
+const vName      = document.getElementById('vName');
+const vInfo      = document.getElementById('vInfo');
+const vSpeed     = document.getElementById('vSpeed');
+
+// Skip tracking if credentials not filled in yet
+const credentialsReady =
+  FLEETLOG_CLIENT_ID     !== "PASTE_YOUR_CLIENT_ID_HERE" &&
+  FLEETLOG_CLIENT_SECRET !== "PASTE_YOUR_CLIENT_SECRET_HERE" &&
+  FLEETLOG_VEHICLE_ID    !== "PASTE_YOUR_VEHICLE_ID_HERE";
+
+if(!credentialsReady){
+  statusText.textContent = "Vehicle: Not configured";
+  console.warn("Fleetlog credentials not set — add them to the CREDENTIALS section.");
+} else {
+  startTracking();
+}
+
+async function getAccessToken(){
+  // Only fetch a new token if expired
+  if(accessToken && Date.now() < tokenExpiry) return accessToken;
+  try {
+    const res = await fetch(`${FLEETLOG_API_BASE}/oauth/token`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        client_id:     FLEETLOG_CLIENT_ID,
+        client_secret: FLEETLOG_CLIENT_SECRET,
+        grant_type:    "client_credentials"
+      })
+    });
+    if(!res.ok) throw new Error("Auth failed: " + res.status);
+    const data = await res.json();
+    accessToken = data.access_token;
+    // Token valid for returned seconds minus 60s buffer
+    tokenExpiry = Date.now() + ((data.expires_in || 3600) - 60) * 1000;
+    return accessToken;
+  } catch(e){
+    console.error("Fleetlog auth error:", e);
+    return null;
+  }
+}
+
+async function fetchVehicleLocation(){
+  const token = await getAccessToken();
+  if(!token){
+    setStatus("error","Auth failed");
+    return;
+  }
+  try {
+    const res = await fetch(`${FLEETLOG_API_BASE}/vehicles/${FLEETLOG_VEHICLE_ID}/location`, {
+      headers: {"Authorization": "Bearer " + token}
+    });
+    if(!res.ok) throw new Error("Location fetch failed: " + res.status);
+    const data = await res.json();
+
+    // ── Adjust field names below if Fleetlog uses different keys ──
+    const lat   = data.lat   ?? data.latitude  ?? data.position?.lat;
+    const lng   = data.lng   ?? data.longitude ?? data.position?.lng ?? data.position?.lon;
+    const speed = data.speed ?? data.speed_kmh ?? null;
+    const name  = data.name  ?? data.vehicle_name ?? "Your Vehicle";
+    // ──────────────────────────────────────────────────────────────
+
+    if(lat == null || lng == null) throw new Error("No lat/lng in response");
+
+    updateVehicleMarker(lat, lng, name, speed);
+    setStatus("live", `${name} · Live`);
+
+  } catch(e){
+    console.error("Fleetlog location error:", e);
+    setStatus("error","Location error");
+  }
+}
+
+function updateVehicleMarker(lat, lng, name, speed){
+  const vehicleIcon = L.divIcon({
+    className:'',
+    html:'<div class="vpin">🚗</div>',
+    iconSize:[40,40],iconAnchor:[20,20],popupAnchor:[0,-25]
+  });
+
+  const speedText = speed != null ? `${Math.round(speed)} km/h` : "";
+  const popupHTML = `
+    <div style="font-family:-apple-system,sans-serif;padding:12px 16px;min-width:180px">
+      <div style="font-weight:700;font-size:0.9rem;color:#0d2137">🚗 ${name}</div>
+      <div style="font-size:0.72rem;color:#6b7c93;margin-top:4px">
+        📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}
+      </div>
+      ${speedText ? `<div style="font-size:0.72rem;color:#1a8c7a;margin-top:3px">⚡ ${speedText}</div>` : ''}
+      <div style="font-size:0.68rem;color:#aaa;margin-top:4px">Updated: ${new Date().toLocaleTimeString()}</div>
+    </div>`;
+
+  if(vehicleMarker){
+    vehicleMarker.setLatLng([lat,lng]);
+    vehicleMarker.getPopup().setContent(popupHTML);
+  } else {
+    vehicleMarker = L.marker([lat,lng],{icon:vehicleIcon,zIndexOffset:1000})
+      .addTo(map)
+      .bindPopup(popupHTML,{maxWidth:220,closeButton:false});
+  }
+
+  // Update sidebar vehicle panel
+  vPanel.style.display = 'block';
+  vName.textContent  = name;
+  vInfo.textContent  = `📍 ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  vSpeed.textContent = speedText ? `⚡ ${speedText}` : '';
+}
+
+function setStatus(type, text){
+  statusDot.className = 'status-dot ' + (type === 'live' ? 'live' : type === 'error' ? 'error' : '');
+  statusText.textContent = 'Vehicle: ' + text;
+}
+
+function startTracking(){
+  fetchVehicleLocation(); // First call immediately
+  setInterval(fetchVehicleLocation, REFRESH_INTERVAL); // Then every 10s
+}
 </script>
 </body>
 </html>
