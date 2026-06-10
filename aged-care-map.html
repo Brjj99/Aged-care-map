@@ -15,7 +15,6 @@
   --red:#e85a4f;--cream:#f5f0e8;--muted:#6b7c93;
 }
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--navy);overflow:hidden}
-
 header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   display:flex;align-items:center;gap:12px;padding:0 18px;
   background:var(--navy);border-bottom:1px solid rgba(255,255,255,0.08);
@@ -31,11 +30,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   letter-spacing:0.07em;padding:3px 9px;border-radius:20px;text-transform:uppercase}
 .hd-count{color:var(--cream);font-size:0.7rem;
   background:rgba(255,255,255,0.07);border-radius:20px;padding:3px 10px}
-
-/* Vehicle status indicator in header */
-.vehicle-status{display:flex;align-items:center;gap:6px;
-  color:var(--cream);font-size:0.7rem;
-  background:rgba(255,255,255,0.07);border-radius:20px;padding:3px 10px}
+.vehicle-status{display:flex;align-items:center;gap:6px;color:var(--cream);
+  font-size:0.7rem;background:rgba(255,255,255,0.07);border-radius:20px;padding:3px 10px}
 .status-dot{width:8px;height:8px;border-radius:50%;background:#aaa;flex-shrink:0}
 .status-dot.live{background:#4caf50;box-shadow:0 0 6px #4caf50}
 .status-dot.error{background:var(--red)}
@@ -69,11 +65,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .fac-addr{color:var(--muted);font-size:0.63rem;margin-top:2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fac-beds{color:var(--muted);font-size:0.62rem;margin-top:2px}
-.sb-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);
-  font-size:0.63rem;color:var(--muted);line-height:1.6}
-.sb-footer strong{color:var(--gold)}
-
-/* Vehicle section in sidebar */
 .sb-vehicle-section{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.07)}
 .sb-vehicle-lbl{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;
   color:var(--muted);text-transform:uppercase;margin-bottom:6px}
@@ -82,22 +73,21 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .vehicle-name{color:var(--cream);font-size:0.75rem;font-weight:600}
 .vehicle-info{color:var(--muted);font-size:0.65rem;margin-top:3px}
 .vehicle-speed{color:var(--teal-l);font-size:0.65rem;margin-top:2px}
+.sb-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);
+  font-size:0.63rem;color:var(--muted);line-height:1.6}
+.sb-footer strong{color:var(--gold)}
 
 #map{position:fixed;top:60px;left:265px;right:0;bottom:0;z-index:1}
 
-/* Popup */
-.leaflet-popup-content-wrapper{
-  border-radius:14px!important;padding:0!important;
-  box-shadow:0 12px 48px rgba(0,0,0,0.3)!important;
-  border:none!important;overflow:hidden;min-width:290px;max-width:330px}
+.leaflet-popup-content-wrapper{border-radius:14px!important;padding:0!important;
+  box-shadow:0 12px 48px rgba(0,0,0,0.3)!important;border:none!important;
+  overflow:hidden;min-width:290px;max-width:330px}
 .leaflet-popup-content{margin:0!important;width:auto!important}
 .leaflet-popup-tip-container{display:none!important}
-.leaflet-popup-close-button{
-  color:rgba(255,255,255,0.7)!important;font-size:20px!important;
+.leaflet-popup-close-button{color:rgba(255,255,255,0.7)!important;font-size:20px!important;
   top:8px!important;right:10px!important;z-index:10;padding:0!important;
   width:auto!important;height:auto!important}
 .leaflet-popup-close-button:hover{color:#fff!important}
-
 .pw-head{background:linear-gradient(135deg,var(--navy),var(--navy-mid));
   padding:14px 16px 12px;display:flex;gap:10px;align-items:flex-start}
 .pw-code{background:var(--teal);color:#fff;font-size:0.66rem;font-weight:800;
@@ -123,23 +113,20 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 .pw-note:last-child{margin-bottom:0}
 .pw-note.info{border-color:var(--teal);background:#eef8f6}
 .pw-note.alert{border-color:var(--red);background:#fff0ef}
-
 .pw-btn-row{margin-top:12px}
 .pw-btn{display:flex;align-items:center;justify-content:center;gap:7px;
   width:100%;padding:10px 14px;border-radius:9px;border:none;
   background:linear-gradient(135deg,#1a8c7a,#22b89e);
-  color:#fff;font-size:0.78rem;font-weight:700;letter-spacing:0.03em;
+  color:#fff;font-size:0.78rem;font-weight:700;
   cursor:pointer;text-decoration:none;
   box-shadow:0 4px 14px rgba(26,140,122,0.35);
   -webkit-tap-highlight-color:transparent;transition:opacity 0.15s}
 .pw-btn:hover,.pw-btn:active{opacity:0.88}
-.pw-btn-icon{font-size:1rem}
 
-/* Marker - facility */
 .cpin{width:46px;height:46px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:0.58rem;font-weight:800;letter-spacing:0.02em;
-  color:#fff;border:3px solid var(--teal);background:var(--navy);
+  font-size:0.58rem;font-weight:800;color:#fff;
+  border:3px solid var(--teal);background:var(--navy);
   box-shadow:0 4px 14px rgba(13,33,55,0.5),0 0 0 4px rgba(34,184,158,0.2);
   cursor:pointer;text-align:center;line-height:1.1;
   -webkit-tap-highlight-color:transparent}
@@ -147,11 +134,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   box-shadow:0 4px 14px rgba(232,90,79,0.5),0 0 0 4px rgba(232,90,79,0.2)}
 .cpin.mid{border-color:var(--amber);background:#8c5c08;
   box-shadow:0 4px 14px rgba(232,166,66,0.5),0 0 0 4px rgba(232,166,66,0.2)}
-
-/* Vehicle marker */
 .vpin{width:40px;height:40px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.2rem;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
   border:3px solid #4caf50;background:#1a3a1a;
   box-shadow:0 4px 14px rgba(76,175,80,0.5),0 0 0 4px rgba(76,175,80,0.2);
   cursor:pointer;animation:pulse 2s infinite}
@@ -159,14 +143,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   0%{box-shadow:0 4px 14px rgba(76,175,80,0.5),0 0 0 4px rgba(76,175,80,0.2)}
   50%{box-shadow:0 4px 14px rgba(76,175,80,0.8),0 0 0 8px rgba(76,175,80,0.1)}
   100%{box-shadow:0 4px 14px rgba(76,175,80,0.5),0 0 0 4px rgba(76,175,80,0.2)}}
-
-/* Legend */
-.map-legend{
-  background:rgba(13,33,55,0.88)!important;
-  border:1px solid rgba(255,255,255,0.1)!important;
-  border-radius:11px!important;padding:11px 13px!important;
-  color:var(--cream)!important;font-size:0.67rem!important;
-  line-height:1.4;box-shadow:none!important}
+.map-legend{background:rgba(13,33,55,0.88)!important;
+  border:1px solid rgba(255,255,255,0.1)!important;border-radius:11px!important;
+  padding:11px 13px!important;color:var(--cream)!important;
+  font-size:0.67rem!important;line-height:1.4;box-shadow:none!important}
 .leg-title{font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
   font-size:0.58rem;color:var(--muted);margin-bottom:8px}
 .leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
@@ -202,17 +182,14 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
   </div>
   <div class="sb-label">Facility Directory</div>
   <div class="fac-list" id="facList"></div>
-
-  <!-- Vehicle info panel -->
   <div class="sb-vehicle-section" id="vehiclePanel" style="display:none">
     <div class="sb-vehicle-lbl">🚗 Live Vehicle</div>
     <div class="vehicle-card">
-      <div class="vehicle-name" id="vName">—</div>
+      <div class="vehicle-name" id="vName">FMC003 EMD</div>
       <div class="vehicle-info" id="vInfo">Locating…</div>
       <div class="vehicle-speed" id="vSpeed"></div>
     </div>
   </div>
-
   <div class="sb-footer">
     <strong>Tap</strong> a pin to view details &amp; open incidents.<br>
     🚗 Live vehicle tracking via Fleetlog.<br>
@@ -223,23 +200,23 @@ header{position:fixed;top:0;left:0;right:0;z-index:1100;height:60px;
 <div id="map"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   FLEETLOG API CREDENTIALS
-   ── Replace the placeholder values below on GitHub ──
-   DO NOT share these credentials publicly.
-   ═══════════════════════════════════════════════════════════ */
-const FLEETLOG_CLIENT_ID     = "5bd4825f7d6fa8616aa0";
-const FLEETLOG_CLIENT_SECRET = "af576d4e-e05c-48ef-adbd-23501bad26de";
-const FLEETLOG_VEHICLE_ID    = "22538";
-// API base URL — confirm with Fleetlog support
-const FLEETLOG_API_BASE      = "https://app.fleetlog.com.au/api/v2";
-// How often to refresh vehicle position (milliseconds) — 10000 = 10 seconds
-const REFRESH_INTERVAL       = 10000;
-/* ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   FLEETLOG CREDENTIALS — Edit these values on GitHub
+   ═══════════════════════════════════════════════════════
+   HOW TO GET YOUR PERSONAL ACCESS TOKEN:
+   1. Go to old.fleetlog.com.au
+   2. Account Settings → API
+   3. Click "Generate access token"
+   4. Copy it and paste below
+   ─────────────────────────────────────────────────────── */
+const FLEETLOG_TOKEN      = "PASTE_YOUR_PERSONAL_ACCESS_TOKEN_HERE";
+const FLEETLOG_VEHICLE_ID = "22538";
+const REFRESH_INTERVAL    = 10000; // 10 seconds
+/* ═══════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════
    SHAREPOINT LINK
-   ═══════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════ */
 const SP_BASE = "https://gunnmcconville.sharepoint.com/:x:/s/GMDispatchCranbourne-ManagementSystem/IQAvXioEJaLXQoCtLoejRMxnAVZc-cb7KlxLpVSodiOWGXE?e=2epmet";
 function sheetLink(tab){ return SP_BASE + "&activeSheet=" + encodeURIComponent(tab); }
 
@@ -264,12 +241,11 @@ const facilities = [
   {code:"XB",name:"Village Baxter",suburb:"Frankston South VIC 3199",address:"8 Robinsons Rd",phone:"(03) 5971 1349",lat:-38.1900,lng:145.1560,beds:64,incidents:1,
    comments:[{type:"info",text:"64-suite government accredited home co-located with retirement village."},{type:"general",text:"Serving Frankston & Mornington Peninsula community since 1986."}]}
 ];
-/* ═══════════════════════════════════════════════════ */
 
 function incClass(n){return n>=8?"hi":n>=5?"mid":""}
 function valClass(n){return n>=8?"warn":n>=5?"caution":"ok"}
 
-/* ── MAP ── */
+/* MAP */
 const map = L.map('map',{zoomControl:false,tap:true,tapTolerance:15})
              .setView([-38.12,145.16],11);
 L.control.zoom({position:'topright'}).addTo(map);
@@ -278,7 +254,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   maxZoom:19
 }).addTo(map);
 
-/* Legend */
 const legend = L.control({position:'bottomright'});
 legend.onAdd = function(){
   const d = L.DomUtil.create('div','map-legend');
@@ -291,7 +266,7 @@ legend.onAdd = function(){
 };
 legend.addTo(map);
 
-/* ── FACILITY MARKERS ── */
+/* FACILITY MARKERS */
 const facList = document.getElementById('facList');
 const rowEls  = [];
 const markers = [];
@@ -321,7 +296,6 @@ facilities.forEach((f,i)=>{
   });
 
   const notes = f.comments.map(c=>`<div class="pw-note ${c.type}">${c.text}</div>`).join('');
-
   const popupHTML = `
     <div class="pw-head">
       <span class="pw-code">${f.code}</span>
@@ -351,8 +325,7 @@ facilities.forEach((f,i)=>{
       ${notes}
       <div class="pw-btn-row">
         <a class="pw-btn" href="${sheetLink(f.code)}" target="_blank" rel="noopener">
-          <span class="pw-btn-icon">📊</span>
-          View ${f.code} Incidents in Tracker
+          📊 View ${f.code} Incidents in Tracker
         </a>
       </div>
     </div>`;
@@ -371,7 +344,6 @@ function setActive(i){
   rowEls[i].scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 
-/* ── SEARCH ── */
 document.getElementById('searchBox').addEventListener('input',function(){
   const q=this.value.toLowerCase();
   rowEls.forEach((row,i)=>{
@@ -383,136 +355,107 @@ document.getElementById('searchBox').addEventListener('input',function(){
   });
 });
 
-/* ══════════════════════════════════════════════════════════
-   FLEETLOG LIVE VEHICLE TRACKING
-   Steps:
-   1. Authenticate with Client ID + Secret → get access token
-   2. Use token to fetch vehicle location
-   3. Update marker on map every 10 seconds
-   ══════════════════════════════════════════════════════════ */
-
-let vehicleMarker = null;
-let accessToken   = null;
-let tokenExpiry   = 0;
-
+/* ═══════════════════════════════════════════════════════
+   FLEETLOG VEHICLE TRACKING
+   Uses Personal Access Token — simpler and more reliable
+   ═══════════════════════════════════════════════════════ */
 const statusDot  = document.getElementById('statusDot');
 const statusText = document.getElementById('statusText');
 const vPanel     = document.getElementById('vehiclePanel');
-const vName      = document.getElementById('vName');
 const vInfo      = document.getElementById('vInfo');
 const vSpeed     = document.getElementById('vSpeed');
 
-// Skip tracking if credentials not filled in yet
-const credentialsReady =
-  FLEETLOG_CLIENT_ID     !== "PASTE_YOUR_CLIENT_ID_HERE" &&
-  FLEETLOG_CLIENT_SECRET !== "PASTE_YOUR_CLIENT_SECRET_HERE" &&
-  FLEETLOG_VEHICLE_ID    !== "PASTE_YOUR_VEHICLE_ID_HERE";
+const tokenReady = FLEETLOG_TOKEN !== "PASTE_YOUR_PERSONAL_ACCESS_TOKEN_HERE";
 
-if(!credentialsReady){
+if(!tokenReady){
   statusText.textContent = "Vehicle: Not configured";
-  console.warn("Fleetlog credentials not set — add them to the CREDENTIALS section.");
 } else {
   startTracking();
 }
 
-async function getAccessToken(){
-  // Only fetch a new token if expired
-  if(accessToken && Date.now() < tokenExpiry) return accessToken;
-  try {
-    const res = await fetch(`${FLEETLOG_API_BASE}/oauth/token`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        client_id:     FLEETLOG_CLIENT_ID,
-        client_secret: FLEETLOG_CLIENT_SECRET,
-        grant_type:    "client_credentials"
-      })
-    });
-    if(!res.ok) throw new Error("Auth failed: " + res.status);
-    const data = await res.json();
-    accessToken = data.access_token;
-    // Token valid for returned seconds minus 60s buffer
-    tokenExpiry = Date.now() + ((data.expires_in || 3600) - 60) * 1000;
-    return accessToken;
-  } catch(e){
-    console.error("Fleetlog auth error:", e);
-    return null;
-  }
-}
-
 async function fetchVehicleLocation(){
-  const token = await getAccessToken();
-  if(!token){
-    setStatus("error","Auth failed");
-    return;
-  }
   try {
-    const res = await fetch(`${FLEETLOG_API_BASE}/vehicles/${FLEETLOG_VEHICLE_ID}/location`, {
-      headers: {"Authorization": "Bearer " + token}
-    });
-    if(!res.ok) throw new Error("Location fetch failed: " + res.status);
-    const data = await res.json();
+    // Try both possible API endpoints
+    const urls = [
+      `https://app.fleetlog.com.au/api/v2/vehicles/${FLEETLOG_VEHICLE_ID}/position`,
+      `https://app.fleetlog.com.au/api/v2/vehicles/${FLEETLOG_VEHICLE_ID}`,
+      `https://old.fleetlog.com.au/api/v2/vehicles/${FLEETLOG_VEHICLE_ID}/position`
+    ];
 
-    // ── Adjust field names below if Fleetlog uses different keys ──
-    const lat   = data.lat   ?? data.latitude  ?? data.position?.lat;
-    const lng   = data.lng   ?? data.longitude ?? data.position?.lng ?? data.position?.lon;
-    const speed = data.speed ?? data.speed_kmh ?? null;
-    const name  = data.name  ?? data.vehicle_name ?? "Your Vehicle";
-    // ──────────────────────────────────────────────────────────────
+    let data = null;
+    for(const url of urls){
+      try {
+        const res = await fetch(url, {
+          headers: {
+            "Authorization": "Bearer " + FLEETLOG_TOKEN,
+            "Accept": "application/json"
+          }
+        });
+        if(res.ok){
+          data = await res.json();
+          break;
+        }
+      } catch(e){ continue; }
+    }
 
-    if(lat == null || lng == null) throw new Error("No lat/lng in response");
+    if(!data) throw new Error("All endpoints failed");
 
-    updateVehicleMarker(lat, lng, name, speed);
+    // Handle both response formats
+    const pos   = data.position || data;
+    const lat   = pos.latitude  || pos.lat;
+    const lng   = pos.longitude || pos.lng;
+    const speed = pos.speed;
+    const addr  = pos.address   || "";
+    const name  = data.name     || "FMC003 EMD";
+
+    if(!lat || !lng) throw new Error("No position data");
+
+    updateVehicle(lat, lng, name, speed, addr);
     setStatus("live", `${name} · Live`);
 
   } catch(e){
-    console.error("Fleetlog location error:", e);
-    setStatus("error","Location error");
+    console.error("Fleetlog error:", e);
+    setStatus("error", "Check token");
   }
 }
 
-function updateVehicleMarker(lat, lng, name, speed){
-  const vehicleIcon = L.divIcon({
+let vehicleMarker = null;
+function updateVehicle(lat, lng, name, speed, addr){
+  const icon = L.divIcon({
     className:'',
     html:'<div class="vpin">🚗</div>',
     iconSize:[40,40],iconAnchor:[20,20],popupAnchor:[0,-25]
   });
-
-  const speedText = speed != null ? `${Math.round(speed)} km/h` : "";
-  const popupHTML = `
-    <div style="font-family:-apple-system,sans-serif;padding:12px 16px;min-width:180px">
+  const speedText = speed != null ? `⚡ ${Math.round(speed)} km/h` : "";
+  const popup = `
+    <div style="font-family:-apple-system,sans-serif;padding:12px 16px;min-width:200px">
       <div style="font-weight:700;font-size:0.9rem;color:#0d2137">🚗 ${name}</div>
-      <div style="font-size:0.72rem;color:#6b7c93;margin-top:4px">
-        📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}
-      </div>
-      ${speedText ? `<div style="font-size:0.72rem;color:#1a8c7a;margin-top:3px">⚡ ${speedText}</div>` : ''}
+      ${addr ? `<div style="font-size:0.72rem;color:#444;margin-top:4px">📍 ${addr}</div>` : ''}
+      ${speedText ? `<div style="font-size:0.72rem;color:#1a8c7a;margin-top:3px">${speedText}</div>` : ''}
       <div style="font-size:0.68rem;color:#aaa;margin-top:4px">Updated: ${new Date().toLocaleTimeString()}</div>
     </div>`;
 
   if(vehicleMarker){
     vehicleMarker.setLatLng([lat,lng]);
-    vehicleMarker.getPopup().setContent(popupHTML);
+    vehicleMarker.getPopup().setContent(popup);
   } else {
-    vehicleMarker = L.marker([lat,lng],{icon:vehicleIcon,zIndexOffset:1000})
-      .addTo(map)
-      .bindPopup(popupHTML,{maxWidth:220,closeButton:false});
+    vehicleMarker = L.marker([lat,lng],{icon,zIndexOffset:1000})
+      .addTo(map).bindPopup(popup,{maxWidth:240,closeButton:false});
   }
 
-  // Update sidebar vehicle panel
   vPanel.style.display = 'block';
-  vName.textContent  = name;
-  vInfo.textContent  = `📍 ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-  vSpeed.textContent = speedText ? `⚡ ${speedText}` : '';
+  vInfo.textContent  = addr || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  vSpeed.textContent = speedText;
 }
 
 function setStatus(type, text){
-  statusDot.className = 'status-dot ' + (type === 'live' ? 'live' : type === 'error' ? 'error' : '');
+  statusDot.className = 'status-dot ' + (type==='live'?'live':type==='error'?'error':'');
   statusText.textContent = 'Vehicle: ' + text;
 }
 
 function startTracking(){
-  fetchVehicleLocation(); // First call immediately
-  setInterval(fetchVehicleLocation, REFRESH_INTERVAL); // Then every 10s
+  fetchVehicleLocation();
+  setInterval(fetchVehicleLocation, REFRESH_INTERVAL);
 }
 </script>
 </body>
