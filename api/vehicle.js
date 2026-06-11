@@ -23,11 +23,13 @@ export default async function handler(req, res) {
 
   // Try multiple Fleetlog API endpoints
   const endpoints = [
-    `https://app.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}/position`,
-    `https://app.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}`,
-    `https://old.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}/position`,
-    `https://old.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}`,
-  ];
+  `https://app.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}/position`,
+  `https://app.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}`,
+  `https://api.fleetlog.com.au/v2/vehicles/${VEHICLE_ID}/position`,
+  `https://api.fleetlog.com.au/v2/vehicles/${VEHICLE_ID}`,
+  `https://old.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}/position`,
+  `https://old.fleetlog.com.au/api/v2/vehicles/${VEHICLE_ID}`,
+];
 
   let lastError = null;
 
